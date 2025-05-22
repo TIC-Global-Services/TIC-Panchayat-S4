@@ -18,16 +18,7 @@ export async function POST(request: Request) {
 
     console.log('Vote request:', { team, ip });
 
-    // Rate limiting: 1 vote per 5 seconds per IP
-    if (team) {
-      const rateLimitKey = `rate_limit:${ip}`;
-      const lastVote = await redis.get(rateLimitKey);
-      if (lastVote) {
-        console.log('Rate limit hit for IP:', ip);
-        return NextResponse.json({ error: 'Please wait before voting again.' }, { status: 429 });
-      }
-      await redis.set(rateLimitKey, Date.now(), { ex: 5 }); // 5-second expiration
-    }
+    // ✅ IP rate limiting removed for load testing
 
     if (team && !['pradhan', 'banrakas'].includes(team)) {
       console.log('Invalid team:', team);
